@@ -7,6 +7,7 @@
     <button @click="ifclick">函数</button>
     <button @click="PromiseClick">Promise</button>
     <button @click="allPromiseClick">allPromise</button>
+    <button @click="goingfuzzy">fuzzy</button>
     <keep-alive exclude='about'>
       <router-view >
       </router-view>
@@ -23,6 +24,11 @@ export default {
     }
   },
   methods:{
+    goingfuzzy () {
+      this.$router.push({
+        path: '/fuzzySearch'
+      })
+    },
     listClick () {
       this.$router.push({
         path: '/shopList',

@@ -9,6 +9,7 @@ const home = () => import('@/components/home')
 const isNew = () => import('@/components/isNew')
 const isMessage = () => import('@/components/isMessage')
 const shopList = () => import('@/components/shopList')
+const fuzzySearch = () => import('@/components/fuzzySearch')
 
 Vue.use(VueRouter)
 
@@ -24,6 +25,11 @@ const routes = [
       meta: {
         title: '关于'
       }
+    },
+    {
+      path: '/fuzzySearch',
+      name: 'fuzzySearch',
+      component: fuzzySearch
     },
     {
       path: '/home',
