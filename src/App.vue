@@ -7,7 +7,7 @@
     <button @click="ifclick">函数</button>
     <button @click="PromiseClick">Promise</button>
     <button @click="allPromiseClick">allPromise</button>
-    <button @click="goingfuzzy">fuzzy</button>
+    <button @click="goingfuzzy">模糊搜索</button>
     <keep-alive exclude='about'>
       <router-view >
       </router-view>
