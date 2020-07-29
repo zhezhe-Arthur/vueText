@@ -8,6 +8,14 @@
     <button @click="PromiseClick">Promise</button>
     <button @click="allPromiseClick">allPromise</button>
     <button @click="goingfuzzy">模糊搜索</button>
+    <el-table :data="tableData" border style="width: 100%" @cell-click="clickCell" >
+    <el-table-column prop="name" label="物料名" width="120"></el-table-column>
+    <el-table-column prop="city" label="市区" width="120"></el-table-column>
+    <el-table-column prop="zip" label="数量" width="120" ></el-table-column>
+  </el-table>
+  <el-dialog :visible.sync="dialogVisible" width="80%">
+    <calculator></calculator>
+  </el-dialog>
     <keep-alive exclude='about'>
       <router-view >
       </router-view>
@@ -16,11 +24,43 @@
 </template>
 
 <script>
+import calculator from './components/calculator'
+
 export default {
   name: 'App',
+  components: {
+    calculator
+  },
   data() {
     return {
-      aboutId: 'zhangsan'
+      aboutId: 'zhangsan',
+      dialogVisible: false,
+      tableData: [
+        {
+          id: '01',
+          name: '机床1',
+          city: '福田',
+          zip: null
+        }, 
+        {
+          id: '02',
+          name: '机床2',
+          city: '罗湖',
+          zip: null
+        }, 
+        {
+          id: '03',
+          name: '机床3',
+          city: '龙岗',
+          zip: null
+        }, 
+        {
+          id: '04',
+          name: '机床4',
+          city: '南山',
+          zip: null
+        }
+      ]
     }
   },
   methods:{
@@ -98,6 +138,12 @@ export default {
         console.log(err);  
       }) 
     },
+    clickCell(row, column) {
+      let beIdClick = row.id
+      if (column.property === 'zip') {
+        this.dialogVisible = true
+      }
+    },
     ifclick () {
       let Arr = [12, 'config', 19, 'WE', 16, -7]
       let Acc = [132, 321, 34, 366, 298]
@@ -119,8 +165,10 @@ export default {
         return perVal + val
       }, 0)
       console.log(new2Acc)     
-    }
+    },
+    
   }
+  
 }
 </script>
 
