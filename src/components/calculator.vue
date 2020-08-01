@@ -6,34 +6,42 @@
                     <input type="text" class="displayInputA" disabled v-model="resultInput">
                     <input type="text" class="displayInputB" autofocus="autofocus" v-model="resultDisplay">
                 </div>
+                <div class="promptinfo" v-show="!promptInfoShow"></div>
+                <div class="promptinfo" v-show="promptInfoShow">
+                    <img src="../assets/prompt.svg" alt="">
+                    <span>等式计算顺序仅从左到右</span>
+                </div>
                 <div class="keyboardInfo">
                     <div class="keyNumber">
-                        <div class="keyNumberA">
-                            <button class="keybutton" @click="infoadd(7)">7</button>
-                            <button class="keybutton" @click="infoadd(8)">8</button>
-                            <button class="keybutton" @click="infoadd(9)">9</button>
-                            <button class="keybutton" @click="infoadd('+')">+</button>
-                            <button class="keybutton" @click="infoadd('-')">-</button>
+                        <div class="keyNumberA keyTop">
+                            <button class="keybutton " @click="markInfoadd(7)">7</button>
+                            <button class="keybutton " @click="markInfoadd(8)">8</button>
+                            <button class="keybutton " @click="markInfoadd(9)">9</button>
+                            <button class="keybutton buttonOperator " @click="markInfoadd('+')">+</button>
+                            <button class="keybutton buttonOperator " @click="markInfoadd('-')">-</button>
                         </div>
+                        <div class="keySpacing"></div>
                         <div class="keyNumberA">
-                            <button class="keybutton" @click="infoadd(4)">4</button>
-                            <button class="keybutton" @click="infoadd(5)">5</button>
-                            <button class="keybutton" @click="infoadd(6)">6</button>
-                            <button class="keybutton" @click="infoadd('x')">x</button>
-                            <button class="keybutton" @click="infoadd('÷')">÷</button>
+                            <button class="keybutton " @click="markInfoadd(4)">4</button>
+                            <button class="keybutton " @click="markInfoadd(5)">5</button>
+                            <button class="keybutton " @click="markInfoadd(6)">6</button>
+                            <button class="keybutton  buttonOperator" @click="markInfoadd('x')">x</button>
+                            <button class="keybutton  buttonOperator" @click="markInfoadd('÷')">÷</button>
                         </div>
+                        <div class="keySpacing"></div>
                         <div class="keyNumberA">
-                            <button class="keybutton" @click="infoadd(1)">1</button>
-                            <button class="keybutton" @click="infoadd(2)">2</button>
-                            <button class="keybutton" @click="infoadd(3)">3</button>
-                            <button class="keybutton buttonEmpty" @click='infoEmpty()'>C</button>
-                            <button class="keybutton" @click='goBack'>←</button>
+                            <button class="keybutton " @click="markInfoadd(1)">1</button>
+                            <button class="keybutton " @click="markInfoadd(2)">2</button>
+                            <button class="keybutton " @click="markInfoadd(3)">3</button>
+                            <button class="keybutton  buttonEmpty" @click='infoEmpty()'>C</button>
+                            <button class="keybutton  buttonEmpty" @click='goBack'>←</button>
                         </div>
+                        <div class="keySpacing"></div>
                         <div class="keyNumberA">
-                            <button class="keybutton" @click="infoadd(0)">0</button>
-                            <button class="keybutton" @click="infoadd('.')">.</button>
-                            <button class="keybuttoninfo">确定</button>
-                            <button class="keybuttoninfo">取消</button>
+                            <button class="keybutton " @click="markInfoadd(0)">0</button>
+                            <button class="keybutton " @click="markInfoadd('.')">.</button>
+                            <button class="keybuttoninfo" @click="markConfirmNumber('1')" >取消</button>
+                            <button class="keybuttoninfo" @click="markConfirmNumber('0')">确定</button>
                         </div>
                     </div>
                 </div>         
@@ -48,7 +56,8 @@ export default {
         return {
             resultInput: null,
             resultDisplay: '',
-            resultStatus: null
+            resultStatus: null,
+            promptInfoShow: false
         }
     },
     watch: {
@@ -68,6 +77,11 @@ export default {
                 if (i==='+' || i==='-' || i==='x' || i==='÷') {
                     operatorArr.push(i)
                 }
+            }
+            if (resultDisplayArr.length > 2) {
+                this.promptInfoShow = true
+            } else {
+                this.promptInfoShow = false
             }
             if (resultDisplayArr.length > 1) {
                 this.resultInput = resultDisplayArr.reduce((acc,cur,inx,src) => {
@@ -102,45 +116,56 @@ export default {
         }
     },
     methods:{
-        infoadd(x) { // 显示
+        markInfoadd(x) { // 显示
             this.resultDisplay += x
         },
         infoEmpty() { // 清空
-            this.resultInput = 0,
+            this.resultInput = null,
             this.resultDisplay = ''
         },
         goBack() { // 回退
             this.resultDisplay = this.resultDisplay.substring(0,this.resultDisplay.length - 1)
             // 回退到最后一位显示值清零
             if (this.resultStatus === 2) {
-                this.resultInput = 0
+                this.resultInput = null
             }
+        },
+        markConfirmNumber(val) {
+            if (val === '0') {
+                if (this.resultInput) {
+                    this.$emit('closeDialog', this.resultInput);
+                } else {
+                    this.$emit('closeDialog', this.resultDisplay);
+                }
+            } else if (val === '1') {
+                this.$emit('closeDialog', '0');
+            }   
         }
     }
 }
 </script>
 <style>
     .calculatorAll {
-        height: 17rem;
+        height: 18rem;
         width: 250px;
-        background-color: #eee7e7;
+        background-color: #c2bdbd;
         
     }
     .displayInfo {
         height: 4.25rem;
         width: 100%;
-        /* background-color: #eee7e7; */
+        /* background-color: #c2bdbd; */
     }
     .displayInput{
         position: relative;
-        top: 10px;
+        top: 10px;     
     }
     
     .displayInput>input {
         background-color: #FFFFFF;
         width: 76%;     
-        height: 22px;
-        border:#eee7e7;
+        height: 20px;
+        border:#c2bdbd;
         text-align: right;
     }
     .displayInputA {
@@ -152,7 +177,7 @@ export default {
     .keyboardInfo {
         width: 80%;
         height: 10.3rem;
-        background-color: #eee7e7;
+        background-color: #c2bdbd;
         position: relative;
         top: 1.26rem;
         margin: 0 auto;
@@ -162,7 +187,7 @@ export default {
         flex-wrap: nowrap;
         justify-content: flex-start;
         position: relative;
-        top: 10px;
+        top: 5px;
     }
     .keybutton {
         height: 40px;
@@ -171,6 +196,11 @@ export default {
         border: 1px solid #f5f5f5;
         border-radius: 3px;
         flex: 1;
+        box-shadow: .2px .3px;
+        font-weight: bold;
+        font-size: 18px;
+        /* position: relative;
+        top: 8px; */
     }
     .keybuttoninfo {
         height: 40px;
@@ -179,10 +209,29 @@ export default {
         border: 1px solid #f5f5f5;
         border-radius: 3px;
         flex: 1;
-        position: relative;
-        top: 2px;
+        box-shadow: .2px .3px;
+        font-weight: bold;
     }
     .buttonEmpty {
-        color: red
+        color: #ff5e67
+    }
+    .buttonOperator {
+        color: #4fbcfe
+    }
+    .promptinfo {
+        height: 10px;
+        position: relative;
+        top: 12px;
+        font-size: 12px;
+        color: #409EFF;
+    }
+    .promptinfo>img {
+        height: 15px;
+        width: 15px;
+        position: relative;
+        top: 3px;
+    }
+    .keySpacing {
+        height: 7px;
     }
 </style>

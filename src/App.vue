@@ -13,8 +13,8 @@
     <el-table-column prop="city" label="市区" width="120"></el-table-column>
     <el-table-column prop="zip" label="数量" width="120" ></el-table-column>
   </el-table>
-  <el-dialog :visible.sync="dialogVisible" width="80%">
-    <calculator></calculator>
+  <el-dialog :visible.sync="dialogVisible" width="75%">
+    <calculator @closeDialog='closeDialog'></calculator>
   </el-dialog>
     <keep-alive exclude='about'>
       <router-view >
@@ -35,6 +35,7 @@ export default {
     return {
       aboutId: 'zhangsan',
       dialogVisible: false,
+      beIdClick: null,
       tableData: [
         {
           id: '01',
@@ -64,6 +65,25 @@ export default {
     }
   },
   methods:{
+    closeDialog (val) {
+      if (val === '0') {
+        this.dialogVisible = false
+      } else {
+        this.dialogVisible = false
+        for (let i = 0; i < this.tableData.length; i++) {
+          if (this.tableData[i].id === this.beIdClick) {
+            this.tableData[i].zip = val
+          }
+        }
+      }
+      
+    },
+    clickCell(row, column) {
+      this.beIdClick = row.id
+      if (column.property === 'zip') {
+        this.dialogVisible = true
+      }
+    },
     goingfuzzy () {
       this.$router.push({
         path: '/fuzzySearch'
@@ -138,12 +158,7 @@ export default {
         console.log(err);  
       }) 
     },
-    clickCell(row, column) {
-      let beIdClick = row.id
-      if (column.property === 'zip') {
-        this.dialogVisible = true
-      }
-    },
+    
     ifclick () {
       let Arr = [12, 'config', 19, 'WE', 16, -7]
       let Acc = [132, 321, 34, 366, 298]

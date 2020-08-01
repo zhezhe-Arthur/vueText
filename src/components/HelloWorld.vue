@@ -24,7 +24,6 @@ export default {
   methods: {
     handNum () {
       console.log(this.something);
-      
       this.num = 'new' + this.num
     }
   },
