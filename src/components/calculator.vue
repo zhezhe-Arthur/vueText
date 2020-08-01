@@ -26,8 +26,8 @@
                             <button class="keybutton" @click="infoadd(1)">1</button>
                             <button class="keybutton" @click="infoadd(2)">2</button>
                             <button class="keybutton" @click="infoadd(3)">3</button>
-                            <button class="keybutton" >C</button>
-                            <button class="keybutton" >←</button>
+                            <button class="keybutton buttonEmpty" @click='infoEmpty()'>C</button>
+                            <button class="keybutton" @click='goBack'>←</button>
                         </div>
                         <div class="keyNumberA">
                             <button class="keybutton" @click="infoadd(0)">0</button>
@@ -46,13 +46,75 @@ export default {
     name: 'calculator',
     data() {
         return {
-            resultInput: 0,
-            resultDisplay: ''
+            resultInput: null,
+            resultDisplay: '',
+            resultStatus: null
+        }
+    },
+    watch: {
+        resultDisplay() {
+            let resultDisplayArr = this.resultDisplay.replace(/÷/g,"+").replace(/-/g,"+").replace(/x/g,"+")
+            resultDisplayArr = resultDisplayArr.split('+') // 截出等式数字数组
+            if (resultDisplayArr.length) {
+                this.resultStatus = resultDisplayArr.length
+            }    
+            let operatorArr = []
+            // 截出等式运算符数组
+            let lastResultDisplay = this.resultDisplay.substr( this.resultDisplay.length-1, 1)
+            if (lastResultDisplay==='+' || lastResultDisplay==='-' || lastResultDisplay==='x' || lastResultDisplay==='÷') {
+                return
+            }
+            for(let i of this.resultDisplay){
+                if (i==='+' || i==='-' || i==='x' || i==='÷') {
+                    operatorArr.push(i)
+                }
+            }
+            if (resultDisplayArr.length > 1) {
+                this.resultInput = resultDisplayArr.reduce((acc,cur,inx,src) => {
+                    let valueA = null // 首项
+                    let valueB = null // 次项
+                    // 上次计算的数
+                    if (acc) {
+                        valueA = Number(acc)
+                    } else {
+                        valueA = Number(resultDisplayArr[inx-1])
+                    }                        
+                    valueB = Number(resultDisplayArr[inx])
+                    // 计算它
+                    if (operatorArr.length > 0 && valueB) {
+                        if (operatorArr[inx-1] === '+') {
+                            acc = valueA + valueB
+                            return acc
+                        }else if (operatorArr[inx-1] === '-') {
+                            acc = valueA - valueB
+                            return acc
+                        }else if (operatorArr[inx-1] === 'x') {
+                            acc = valueA * valueB
+                            return acc
+                        }else if (operatorArr[inx-1] === '÷') {
+                            acc = valueA / valueB
+                            return acc
+                        }
+                    }  
+                })
+            }
+           
         }
     },
     methods:{
-        infoadd(x) {
+        infoadd(x) { // 显示
             this.resultDisplay += x
+        },
+        infoEmpty() { // 清空
+            this.resultInput = 0,
+            this.resultDisplay = ''
+        },
+        goBack() { // 回退
+            this.resultDisplay = this.resultDisplay.substring(0,this.resultDisplay.length - 1)
+            // 回退到最后一位显示值清零
+            if (this.resultStatus === 2) {
+                this.resultInput = 0
+            }
         }
     }
 }
@@ -119,5 +181,8 @@ export default {
         flex: 1;
         position: relative;
         top: 2px;
+    }
+    .buttonEmpty {
+        color: red
     }
 </style>
